@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<title>Hisse Takip</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  th { background: #f4f4f4; }
+</style>
+</head>
+<body>
+
+<h2>Takipteki Hisseler</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Hisse Kodu</th>
+      <th>Güncel Fiyat (TRY)</th>
+    </tr>
+  </thead>
+  <tbody id="hisseTablo">
+    <!-- Veriler buraya gelecek -->
+  </tbody>
+</table>
+
+<script>
+const hisseler = ["AKENR.IS", "SAHOL.IS", "KOZAL.IS", "SASA.IS", "KOTON.IS"];
+
+async function fiyatGetir(kod) {
+  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${kod}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.quoteResponse.result[0].regularMarketPrice;
+  } catch {
+    return "Hata";
+  }
+}
+
+async function tabloGuncelle() {
+  const tbody = document.getElementById("hisseTablo");
+  tbody.innerHTML = "";
+  for (let kod of hisseler) {
+    const fiyat = await fiyatGetir(kod);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${kod.replace(".IS","")}</td><td>${fiyat}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+// Sayfa yüklendiğinde tabloyu güncelle
+window.onload = tabloGuncelle;
+</script>
+
+</body>
+</html>
